@@ -63,6 +63,13 @@ resources:
      - php-kube-test
 
 jobs:
+  - name: test
+    type: runSh
+    triggerMode: parallel
+    steps:
+      - TASK:
+        - script: echo hello
+
   - name: php-kube-test_runCI
     type: runCI
     flags:
