@@ -26,7 +26,7 @@ build:
     - sed -i '/versionName/d' $JOB_STATE/php-image.env ; echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/php-image.env
     - sed -i '/versionName/d' $JOB_STATE/nginx-image.env ; echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/nginx-image.env
     - sed -i '/sourceName/d' $JOB_STATE/nginx-image.env ; echo "sourceName=$GCR_BASE/$NGINX_IMAGE_NAME" >> $JOB_STATE/nginx-image.env
-    - sed -i '/sourceName/d' $JOB_STATE/php-image.env ; echo "sourceName=$GCR_BASE/$$PHP_IMAGE_NAME" >> $JOB_STATE/nphp-image.env
+    - sed -i '/sourceName/d' $JOB_STATE/php-image.env ; echo "sourceName=$GCR_BASE/$PHP_IMAGE_NAME" >> $JOB_STATE/nphp-image.env
 
 integrations:
   hub:
