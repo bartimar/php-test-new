@@ -23,8 +23,8 @@ build:
     - docker build -t "$PHP_IMAGE" .
     - docker push "$NGINX_IMAGE"
     - docker push "$PHP_IMAGE"
-    - echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/php-image.env
-    - echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/nginx-image.env
+#    - echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/php-image.env
+#    - echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/nginx-image.env
 
 integrations:
   hub:
