@@ -25,6 +25,9 @@ build:
     - docker push "$PHP_IMAGE"
     - echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/php-image.env
     - echo "versionName=$BRANCH.$BUILD_NUMBER" >> $JOB_STATE/nginx-image.env
+    - echo "sourceName=$NGINX_IMAGE" >> $JOB_STATE/nginx-image.env
+    - echo "sourceName=$PHP_IMAGE"   >> $JOB_STATE/php-image.env
+
 integrations:
   hub:
     - integrationName: gcloud-integration    #replace with your subscription integration name
