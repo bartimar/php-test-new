@@ -38,7 +38,7 @@ resources:
     type: image
     integration: gcloud-integration    #replace with your Docker Hub integration name
     pointer:
-      sourceName: "${GCR_BASE}/${NGINX_IMAGE_NAME}"  #replace with your image name on Docker Hub
+      sourceName: $GCR_BASE/$NGINX_IMAGE_NAME  #replace with your image name on Docker Hub
     seed:
       versionName: "master.1"  #replace with your image tag on Docker Hub
     flags:
@@ -48,7 +48,7 @@ resources:
     type: image
     integration: gcloud-integration
     pointer:
-      sourceName: "${GCR_BASE}/${PHP_IMAGE_NAME}"
+      sourceName: $GCR_BASE/$PHP_IMAGE_NAME
     seed:
       versionName: "master.1"
     flags:
