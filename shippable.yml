@@ -7,7 +7,7 @@ branches:
 
 env:
   global:
-    - secure: Yk7231s0euUDsS4An/05ImAFdUrFw8PVjCLB1CBpa9Gzq15j2T2A7npJxYyoy1QBmltffd7sxFqH98w/x4ooyz6AUyyG+l3XreN+/V1OqxUqmeHpHGhXoxxTF1WXo/NTHUBH9sLZtBMd6CCOUOlTZ+5mTV6Y4Grd9GNCAtfOj85uu5/Co01O3xAygBFTuO3bF/SuVopuWehXrtMPTY1DN9Rfz6uQ7Mw240RW7BLHQcm0VVVauVmzoiKAIXNKbfViyIeRtZixGHcAg4LO9UWQed7YCcBO9gbT9gPJvhGctoG/5lYiS10peqQfueif83YaNNsJBNZ8RVqAhFq/iXzDZQ==
+    - secure: QYfbRlo0zvZH+u6LSZrrRJ7m2kD1u5Uj8FyU18tH/SybbS06uASMTbq873vwG9gV38MIftPkWLrTM+YNYseecvR+zlu/PnXy3MW4miLsOoiZvfhSJu7eDD8DsRQKcYnRqgz1DPkNSOc34kI/VpKw/+ZGj5429dQc2Ni1jkCb5xBe1mo2iTYr86Bzr6KNaULMoiwxVvc3jvi8btOidgMWCEMOvFvBgzHYENSwwSsiCmXGyRwNeMhxwynN6E3bmCXKe4ekMpzBr7ghMdhcUlCBzUUTpVymahWOEysp2el2ScHskmbE5H3iP/Bw8v5cu/8zmSj1yPk3VmEt+Oo85/zhHw==
     - GCR_BASE="eu.gcr.io/$MY_ORG"
     - IMAGE_TAG="${BRANCH}.${BUILD_NUMBER}"
     - NGINX_IMAGE_NAME="nginx-test"
