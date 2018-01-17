@@ -70,14 +70,14 @@ resources:
     version:
       memory: 256
       portMappings:
-        - 80:80
+        - ":80"
 
   - name: php_opts
     type: dockerOptions
     version:
-      memory: 512
+      memory: 256
       portMappings:
-        - 9000:9000
+        - ":9000"
 
 ######### REPLICAS
   - name: app_replicas
