@@ -56,7 +56,7 @@ resources:
     type: cluster
     integration: gcloud-integration    #replace with your Kubernetes integration name
     pointer:
-      sourceName: "$GKE_CLUSTER_NAME"
+      sourceName: "test-cluster"
       region: "europe-west1-d"
       namespace: "test"
     flags:
