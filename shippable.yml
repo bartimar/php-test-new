@@ -1,6 +1,5 @@
 language: php
 
-
 branches:
   only:
     - master
@@ -28,12 +27,15 @@ build:
     - sed -i '/sourceName/d' $JOB_STATE/nginx-image.env ; echo "sourceName=$GCR_BASE/$NGINX_IMAGE_NAME" >> $JOB_STATE/nginx-image.env
     - sed -i '/sourceName/d' $JOB_STATE/php-image.env ; echo "sourceName=$GCR_BASE/$PHP_IMAGE_NAME" >> $JOB_STATE/php-image.env
 
+######## INTEGRATIONS
 integrations:
   hub:
     - integrationName: gcloud-integration    #replace with your subscription integration name
       type: gcloudKey
 
 resources:
+
+######## IMAGES
   - name: nginx-image
     type: image
     integration: gcloud-integration    #replace with your Docker Hub integration name
@@ -54,7 +56,36 @@ resources:
     flags:
       - php-test-new
 
-#kubernetes cluster
+######### PARAMS
+  - name: app_env
+    type: params
+    version:
+      params:
+        SAMPLE_ENV_VAR: "hello-world"
+
+
+######### DOCKER OPTS
+  - name: nginx_opts
+    type: dockerOptions
+    version:
+      memory: 1024
+      portMappings:
+        - 80:80
+
+  - name: app_opts_2
+    type: dockerOptions
+    version:
+      memory: 2048
+      portMappings:
+        - 9000:9000
+
+######### REPLICAS
+  - name: app_replicas
+    type: replicas
+    version:
+      count: 2
+
+######### CLUSTERS 
   - name: gke-cluster
     type: cluster
     integration: gcloud-integration    #replace with your Kubernetes integration name
@@ -65,7 +96,10 @@ resources:
     flags:
      - php-test-new
 
+######### JOBS
 jobs:
+
+######### CI
   - name: php-test-new_runCI
     type: runCI
     flags:
@@ -74,6 +108,7 @@ jobs:
       - OUT: nginx-image
       - OUT: php-image
 
+######### MANIFEST
   - name: app-manifest
     type: manifest
     flags:
@@ -81,7 +116,15 @@ jobs:
     steps:
      - IN: php-image
      - IN: nginx-image
+     - IN: app_env
+     - IN: nginx_opts
+       applyTo:
+         - nginx_image
+     - IN: php_opts
+       applyTo:
+         - php-image
 
+######### DEPLOY
   - name: deploy
     type: deploy
     flags:
@@ -89,3 +132,4 @@ jobs:
     steps:
       - IN: app-manifest
       - IN: gke-cluster
+      - IN: app_replicas
