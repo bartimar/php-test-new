@@ -57,7 +57,7 @@ resources:
     integration: gcloud-integration    #replace with your Kubernetes integration name
     pointer:
       sourceName: "$GKE_CLUSTER_NAME"
-      region: "$GKE_REGION"
+      region: "europe-west1-d"
       namespace: "test"
     flags:
      - php-test-new
