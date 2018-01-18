@@ -61,10 +61,32 @@ resources:
     version:
       params:
         SAMPLE_ENV_VAR: "hello-world"
+        ENVIRONMENT: "dev"
+
+  - name: app_env_prod
+    type: params
+    version:
+      params:
+        SAMPLE_ENV_VAR: "hello-world"
+        ENVIRONMENT: "prod"
 
 
 ######### DOCKER OPTS
   - name: nginx_opts
+    type: dockerOptions
+    version:
+      memory: 64
+      portMappings:
+        - ":80"
+
+  - name: php_opts
+    type: dockerOptions
+    version:
+      memory: 64
+      portMappings:
+        - ":9000"
+
+  - name: nginx_opts_prod
     type: dockerOptions
     version:
       memory: 128
@@ -82,6 +104,11 @@ resources:
   - name: app_replicas
     type: replicas
     version:
+      count: 1
+
+  - name: app_replicas_prod
+    type: replicas
+    version:
       count: 2
 
 ######### CLUSTERS 
@@ -92,6 +119,16 @@ resources:
       sourceName: "test-cluster"
       region: "europe-west1-d"
       namespace: "test"
+    flags:
+     - php-test-new
+
+  - name: gke-cluster_prod
+    type: cluster
+    integration: gcloud-integration    #replace with your Kubernetes integration name
+    pointer:
+      sourceName: "test-cluster"
+      region: "europe-west1-d"
+      namespace: "production"
     flags:
      - php-test-new
 
@@ -123,6 +160,21 @@ jobs:
        applyTo:
          - php-image
 
+  - name: app-manifest_prod
+    type: manifest
+    flags:
+      - php-test-new
+    steps:
+     - IN: php-image
+     - IN: nginx-image
+     - IN: app_env_prod
+     - IN: nginx_opts_prod
+       applyTo:
+         - nginx-image
+     - IN: php_opts_prod
+       applyTo:
+         - php-image
+
 ######### DEPLOY
   - name: deploy
     type: deploy
@@ -132,3 +184,12 @@ jobs:
       - IN: app-manifest
       - IN: gke-cluster
       - IN: app_replicas
+
+  - name: deploy_prod
+    type: deploy
+    flags:
+      - php-test-new
+    steps:
+      - IN: app-manifest_prod
+      - IN: gke-cluster_prod
+      - IN: app_replicas_prod
