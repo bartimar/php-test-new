@@ -68,14 +68,14 @@ resources:
   - name: nginx_opts
     type: dockerOptions
     version:
-      memory: 256
+      memory: 128
       portMappings:
         - ":80"
 
   - name: php_opts
     type: dockerOptions
     version:
-      memory: 256
+      memory: 128
       portMappings:
         - ":9000"
 
