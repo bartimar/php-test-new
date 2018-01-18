@@ -119,7 +119,7 @@ jobs:
      - IN: app_env
      - IN: nginx_opts
        applyTo:
-         - nginx_image
+         - nginx-image
      - IN: php_opts
        applyTo:
          - php-image
