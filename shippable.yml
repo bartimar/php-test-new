@@ -93,7 +93,7 @@ resources:
       portMappings:
         - ":80"
 
-  - name: php_opts
+  - name: php_opts_prod
     type: dockerOptions
     version:
       memory: 128
