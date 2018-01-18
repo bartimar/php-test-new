@@ -13,8 +13,6 @@ env:
     - PHP_IMAGE_NAME="php-test"
     - NGINX_IMAGE="${GCR_BASE}/${NGINX_IMAGE_NAME}:${IMAGE_TAG}"
     - PHP_IMAGE="${GCR_BASE}/${PHP_IMAGE_NAME}:${IMAGE_TAG}"
-    - GKE_CLUSTER_NAME="test-cluster"
-    - GKE_REGION="europe-west1-d"
 build:
   ci:
     - cp nginx-Dockerfile Dockerfile 
@@ -91,8 +89,8 @@ resources:
     type: cluster
     integration: gcloud-integration    #replace with your Kubernetes integration name
     pointer:
-      sourceName: "$GKE_CLUSTER_NAME"
-      region: "$GKE_REGION"
+      sourceName: "test-cluster"
+      region: "europe-west1-d"
       namespace: "test"
     flags:
      - php-test-new
