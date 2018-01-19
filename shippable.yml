@@ -247,7 +247,7 @@ jobs:
         scopes:
           - gke
       - TASK:
-        - script: "kubectl autoscale deployment deploy-prod-app-manifest-prod-$BUILD_NUMBER --min=1 --max=2 --cpu-percent=80"
+        - script: "kubectl autoscale deployment $( kubectl get deploy -o jsonpath='{.items[0].metadata.name}' ) --min=1 --max=2 --cpu-percent=80"
 
   - name: provision_stage  
     type: provision
