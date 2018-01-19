@@ -205,7 +205,6 @@ resources:
         shippable.jobName: deploy_prod
 
 ######### KUBECTL CONFIG
-resources:
   - name:           gcloud-cli
     type:           cliConfig
     integration:    gcloud-integration
