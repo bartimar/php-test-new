@@ -77,7 +77,7 @@ resources:
     type: dockerOptions
     version:
       memory: 64
-      cpuShares: 100 # in millicores (200m = 0.2 CPU)
+      cpuShares: 10 # in millicores (200m = 0.2 CPU)
       portMappings:
         - ":80"
 
@@ -85,7 +85,7 @@ resources:
     type: dockerOptions
     version:
       memory: 64
-      cpuShares: 100
+      cpuShares: 10
       portMappings:
         - ":9000"
 
@@ -93,7 +93,7 @@ resources:
     type: dockerOptions
     version:
       memory: 128
-      cpuShares: 200
+      cpuShares: 20
       portMappings:
         - ":80"
 
@@ -101,7 +101,7 @@ resources:
     type: dockerOptions
     version:
       memory: 128
-      cpuShares: 200
+      cpuShares: 20
       portMappings:
         - ":9000"
 
