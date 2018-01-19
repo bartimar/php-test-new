@@ -204,6 +204,15 @@ resources:
       selector:
         shippable.jobName: deploy_prod
 
+######### KUBECTL CONFIG
+resources:
+  - name:           gcloud-cli
+    type:           cliConfig
+    integration:    gcloud-integration
+    pointer:        
+      region: "europe-west1-d"
+      clusterName: "test-cluster"
+
 ######### JOBS
 jobs:
 
@@ -263,12 +272,15 @@ jobs:
          - php-image
 
 ######### PROVISION
-  - name: horizontalpodautoscaler
+  - name: horizontal_pod_autoscaler
     type: runSh
     steps:
       - IN: deploy_prod
+      - IN: gcloud-cli
+        scopes:
+          - gke
       - TASK:
-        - script: "echo kubectl autoscale deployment deployment_name --min=1 --max=2 --cpu-percent=80"
+        - script: "kubectl autoscale deployment deploy-prod-app-manifest-prod-$BUILD_NUMBER --min=1 --max=2 --cpu-percent=80"
 
   - name: app_provision  
     type: provision
