@@ -263,6 +263,13 @@ jobs:
          - php-image
 
 ######### PROVISION
+  - name: horizontalpodautoscaler
+    type: runSh
+    steps:
+      - IN: deploy_prod
+      - TASK:
+        - script: "echo kubectl autoscale deployment deployment_name --min=1 --max=2 --cpu-percent=80"
+
   - name: app_provision  
     type: provision
     steps:
