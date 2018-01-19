@@ -32,6 +32,7 @@ integrations:
     - integrationName: gcloud-integration    #replace with your subscription integration name
       type: gcloudKey
 
+######## RESOURCES
 resources:
 
 ######## IMAGES
@@ -136,6 +137,24 @@ resources:
     flags:
      - php-test-new
 
+######### LOADBALANCERS
+  - name: nginx-lb
+    type: loadBalancer
+    integration: gcloud-integration 
+    pointer:
+      sourceName: nginx-lb
+      method: NodePort
+      namespace: "production"
+      clusterName: "test-cluster"
+      region: "europe-west1-d"
+    version:
+      ports: 
+        - name: http
+          port: 80
+          targetPort: 80
+      selector:
+        shippable.jobName: deploy
+
 ######### JOBS
 jobs:
 
@@ -195,6 +214,8 @@ jobs:
       - php-test-new
     steps:
       - IN: app-manifest_prod
+        switch: off
+      - IN: nginx-lb
         switch: off
       - IN: gke-cluster_prod
       - IN: app_replicas_prod
