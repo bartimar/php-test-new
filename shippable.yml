@@ -294,6 +294,7 @@ jobs:
       - IN: app-manifest_stage
       - IN: gke-cluster_stage
       - IN: app_replicas_stage
+      - IN: deploy_dev
 
   - name: deploy_prod
     type: deploy
@@ -301,6 +302,8 @@ jobs:
       - php-test-new
     steps:
       - IN: app-manifest_prod
+        switch: off
+      - IN: deploy_stage
         switch: off
       - IN: gke-cluster_prod
       - IN: app_replicas_prod
