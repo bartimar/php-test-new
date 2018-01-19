@@ -274,6 +274,7 @@ jobs:
     type: provision
     steps:
       - IN: nginx-lb  
+      - IN: deploy_prod
 
 ######### DEPLOY
   - name: deploy_dev
