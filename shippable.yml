@@ -153,7 +153,7 @@ resources:
           port: 80
           targetPort: 80
       selector:
-        shippable.jobName: deploy
+        shippable.jobName: deploy_prod
 
 ######### JOBS
 jobs:
