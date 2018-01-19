@@ -236,6 +236,7 @@ jobs:
      - IN: php_opts_prod
        applyTo:
          - php-image
+     - IN: deploy_stage
 
 ######### PROVISION
   - name: horizontal_pod_autoscaler
