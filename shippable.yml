@@ -3,6 +3,10 @@ language: php
 branches:
   only:
     - master
+    - development
+    - release/*
+  except:
+    - feat*
 
 env:
   global:
@@ -57,12 +61,19 @@ resources:
       - php-test-new
 
 ######### PARAMS
-  - name: app_env
+  - name: app_env_dev
     type: params
     version:
       params:
         SAMPLE_ENV_VAR: "hello-world"
         ENVIRONMENT: "dev"
+
+  - name: app_env_stage
+    type: params
+    version:
+      params:
+        SAMPLE_ENV_VAR: "hello-world"
+        ENVIRONMENT: "stage"
 
   - name: app_env_prod
     type: params
@@ -73,7 +84,7 @@ resources:
 
 
 ######### DOCKER OPTS
-  - name: nginx_opts
+  - name: nginx_opts_dev
     type: dockerOptions
     version:
       memory: 64
@@ -81,7 +92,23 @@ resources:
       portMappings:
         - ":80"
 
-  - name: php_opts
+  - name: php_opts_dev
+    type: dockerOptions
+    version:
+      memory: 64
+      cpuShares: 10
+      portMappings:
+        - ":9000"
+
+  - name: nginx_opts_stage
+    type: dockerOptions
+    version:
+      memory: 64
+      cpuShares: 10 # in millicores (200m = 0.2 CPU)
+      portMappings:
+        - ":80"
+
+  - name: php_opts_stage
     type: dockerOptions
     version:
       memory: 64
@@ -106,7 +133,12 @@ resources:
         - ":9000"
 
 ######### REPLICAS
-  - name: app_replicas
+  - name: app_replicas_dev
+    type: replicas
+    version:
+      count: 1
+
+  - name: app_replicas_stage
     type: replicas
     version:
       count: 1
@@ -117,13 +149,23 @@ resources:
       count: 2
 
 ######### CLUSTERS 
-  - name: gke-cluster
+  - name: gke-cluster_dev
     type: cluster
     integration: gcloud-integration    #replace with your Kubernetes integration name
     pointer:
       sourceName: "test-cluster"
       region: "europe-west1-d"
       namespace: "test"
+    flags:
+     - php-test-new
+
+  - name: gke-cluster_stage
+    type: cluster
+    integration: gcloud-integration    #replace with your Kubernetes integration name
+    pointer:
+      sourceName: "test-cluster"
+      region: "europe-west1-d"
+      namespace: "stage"
     flags:
      - php-test-new
 
@@ -168,18 +210,33 @@ jobs:
       - OUT: php-image
 
 ######### MANIFEST
-  - name: app-manifest
+  - name: app-manifest_dev
     type: manifest
     flags:
       - php-test-new
     steps:
      - IN: php-image
      - IN: nginx-image
-     - IN: app_env
-     - IN: nginx_opts
+     - IN: app_env_dev
+     - IN: nginx_opts_dev
        applyTo:
          - nginx-image
-     - IN: php_opts
+     - IN: php_opts_dev
+       applyTo:
+         - php-image
+
+  - name: app-manifest_stage
+    type: manifest
+    flags:
+      - php-test-new
+    steps:
+     - IN: php-image
+     - IN: nginx-image
+     - IN: app_env_stage
+     - IN: nginx_opts_stage
+       applyTo:
+         - nginx-image
+     - IN: php_opts_stage
        applyTo:
          - php-image
 
@@ -199,14 +256,23 @@ jobs:
          - php-image
 
 ######### DEPLOY
-  - name: deploy
+  - name: deploy_dev
     type: deploy
     flags:
       - php-test-new
     steps:
-      - IN: app-manifest
-      - IN: gke-cluster
-      - IN: app_replicas
+      - IN: app-manifest_dev
+      - IN: gke-cluster_dev
+      - IN: app_replicas_dev
+
+  - name: deploy_stage
+    type: deploy
+    flags:
+      - php-test-new
+    steps:
+      - IN: app-manifest_stage
+      - IN: gke-cluster_stage
+      - IN: app_replicas_stage
 
   - name: deploy_prod
     type: deploy
