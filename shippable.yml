@@ -193,7 +193,7 @@ resources:
       ports: 
         - name: http
           port: 80
-          targetPort: 80
+          protocol: TCP
       selector:
         shippable.jobName: deploy_prod
 
@@ -255,6 +255,12 @@ jobs:
        applyTo:
          - php-image
 
+######### PROVISION
+  - name: app_provision  
+    type: provision
+    steps:
+      - IN: nginx-lb  
+
 ######### DEPLOY
   - name: deploy_dev
     type: deploy
@@ -280,12 +286,6 @@ jobs:
       - php-test-new
     steps:
       - IN: app-manifest_prod
-        switch: off
-      - IN: nginx-lb
-        applyTo:
-          - manifest: app-manifest_prod
-            image: nginx-image
-            port: 80
         switch: off
       - IN: gke-cluster_prod
       - IN: app_replicas_prod
