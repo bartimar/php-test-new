@@ -19,6 +19,13 @@ env:
     - PHP_IMAGE="${GCR_BASE}/${PHP_IMAGE_NAME}:${IMAGE_TAG}"
 build:
   ci:
+    - # composer install --no-interaction --optimize-autoloader
+    - # npm install --unsafe-perm
+    - # ./vendor/bin/test -p php ...
+    - # ./vendor/bin/phpstan
+    - # ./vendor/bin/phpcs
+    - echo 'ci done'
+  post_ci:
     - cp nginx-Dockerfile Dockerfile 
     - docker build -t "$NGINX_IMAGE" . 
     - cp php-Dockerfile Dockerfile
