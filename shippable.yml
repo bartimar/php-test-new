@@ -68,13 +68,6 @@ resources:
       - php-test-new
 
 ######### PARAMS
-  - name: app_env_dev
-    type: params
-    version:
-      params:
-        SAMPLE_ENV_VAR: "hello-world"
-        ENVIRONMENT: "dev"
-
   - name: app_env_stage
     type: params
     version:
@@ -89,36 +82,21 @@ resources:
         SAMPLE_ENV_VAR: "hello-world"
         ENVIRONMENT: "prod"
 
-
 ######### DOCKER OPTS
-  - name: nginx_opts_dev
-    type: dockerOptions
-    version:
-      memory: 64
-      cpuShares: 10 # in millicores (200m = 0.2 CPU)
-      portMappings:
-        - ":80"
-
-  - name: php_opts_dev
-    type: dockerOptions
-    version:
-      memory: 64
-      cpuShares: 10
-      portMappings:
-        - ":9000"
-
   - name: nginx_opts_stage
     type: dockerOptions
     version:
-      memory: 64
+      memory: 32
       cpuShares: 10 # in millicores (200m = 0.2 CPU)
+      labels:
+        app: nginx
       portMappings:
         - ":80"
 
   - name: php_opts_stage
     type: dockerOptions
     version:
-      memory: 64
+      memory: 32
       cpuShares: 10
       portMappings:
         - ":9000"
@@ -126,25 +104,22 @@ resources:
   - name: nginx_opts_prod
     type: dockerOptions
     version:
-      memory: 128
+      memory: 64
       cpuShares: 20
+      labels:
+        app: nginx
       portMappings:
         - ":80"
 
   - name: php_opts_prod
     type: dockerOptions
     version:
-      memory: 128
+      memory: 64
       cpuShares: 20
       portMappings:
         - ":9000"
 
 ######### REPLICAS
-  - name: app_replicas_dev
-    type: replicas
-    version:
-      count: 1
-
   - name: app_replicas_stage
     type: replicas
     version:
@@ -156,16 +131,6 @@ resources:
       count: 2
 
 ######### CLUSTERS 
-  - name: gke-cluster_dev
-    type: cluster
-    integration: gcloud-integration    #replace with your Kubernetes integration name
-    pointer:
-      sourceName: "test-cluster"
-      region: "europe-west1-d"
-      namespace: "test"
-    flags:
-     - php-test-new
-
   - name: gke-cluster_stage
     type: cluster
     integration: gcloud-integration    #replace with your Kubernetes integration name
@@ -187,13 +152,13 @@ resources:
      - php-test-new
 
 ######### LOADBALANCERS
-  - name: nginx-lb
+  - name: nginx-lb_stage
     type: loadBalancer
     integration: gcloud-integration 
     pointer:
       sourceName: nginx-lb
       method: NodePort
-      namespace: "production"
+      namespace: "stage"
       clusterName: "test-cluster"
       region: "europe-west1-d"
     version:
@@ -202,7 +167,24 @@ resources:
           port: 80
           protocol: TCP
       selector:
-        shippable.jobName: deploy_prod
+        app: nginx
+
+  - name: nginx-lb_prod
+    type: loadBalancer
+    integration: gcloud-integration
+    pointer:
+      sourceName: nginx-lb
+      method: NodePort
+      namespace: "production"
+      clusterName: "test-cluster"
+      region: "europe-west1-d"
+    version:
+      ports:
+        - name: http
+          port: 80
+          protocol: TCP
+      selector:
+        app: nginx
 
 ######### KUBECTL CONFIG
   - name:           gcloud-cli
@@ -225,21 +207,6 @@ jobs:
       - OUT: php-image
 
 ######### MANIFEST
-  - name: app-manifest_dev
-    type: manifest
-    flags:
-      - php-test-new
-    steps:
-     - IN: php-image
-     - IN: nginx-image
-     - IN: app_env_dev
-     - IN: nginx_opts_dev
-       applyTo:
-         - nginx-image
-     - IN: php_opts_dev
-       applyTo:
-         - php-image
-
   - name: app-manifest_stage
     type: manifest
     flags:
@@ -281,22 +248,19 @@ jobs:
       - TASK:
         - script: "kubectl autoscale deployment deploy-prod-app-manifest-prod-$BUILD_NUMBER --min=1 --max=2 --cpu-percent=80"
 
-  - name: app_provision  
+  - name: provision_stage  
     type: provision
     steps:
-      - IN: nginx-lb  
-      - IN: deploy_prod
+      - IN: nginx-lb_stage  
+      - IN: deploy_stage
+
+  - name: provision_prod
+    type: provision
+    steps:
+      - IN: nginx-lb_prod
+      - IN: deploy_stage
 
 ######### DEPLOY
-  - name: deploy_dev
-    type: deploy
-    flags:
-      - php-test-new
-    steps:
-      - IN: app-manifest_dev
-      - IN: gke-cluster_dev
-      - IN: app_replicas_dev
-
   - name: deploy_stage
     type: deploy
     flags:
@@ -305,7 +269,6 @@ jobs:
       - IN: app-manifest_stage
       - IN: gke-cluster_stage
       - IN: app_replicas_stage
-      - IN: deploy_dev
 
   - name: deploy_prod
     type: deploy
